@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 final theme = ThemeData(
   scaffoldBackgroundColor: const Color.fromARGB(255, 34, 34, 34),
   dividerTheme: DividerThemeData(color: Colors.white24),
+  primarySwatch: Colors.yellow,
   appBarTheme: AppBarTheme(
     backgroundColor: const Color.fromARGB(255, 34, 34, 34),
     titleTextStyle: TextStyle(
@@ -23,6 +24,20 @@ final theme = ThemeData(
       color: Colors.white,
       fontWeight: FontWeight.w300,
       fontSize: 14,
+    ),
+    displayLarge: const TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.w700,
+      fontSize: 22,
+    ),
+    displayMedium: const TextStyle(
+      color: Colors.white12,
+      fontWeight: FontWeight.w500,
+      fontSize: 18,
+    ),
+    displaySmall: const TextStyle(
+      color: Colors.yellow,
+      fontWeight: FontWeight.w500,
     ),
   ),
 );
