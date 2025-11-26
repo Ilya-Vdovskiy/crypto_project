@@ -10,37 +10,52 @@ import 'package:talker_bloc_logger/talker_bloc_logger.dart';
 import 'package:talker_dio_logger/talker_dio_logger.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 import 'crypto_coins_app.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() {
-  final talker = TalkerFlutter.init();
-  GetIt.I.registerSingleton(talker);
+   runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  GetIt.I<Talker>().debug('Start talker...');
+    final talker = TalkerFlutter.init();
+    GetIt.I.registerSingleton<Talker>(talker);
 
-  final dio = Dio();
-  dio.interceptors.add(
-    TalkerDioLogger(
-      settings: const TalkerDioLoggerSettings(printResponseData: false),
-    ),
-  );
+    GetIt.I<Talker>().debug('Start talker...');
 
-  Bloc.observer = TalkerBlocObserver(
-    talker: talker,
-    settings: TalkerBlocLoggerSettings(
-      printEventFullData: false,
-      printStateFullData: false,
-    ),
-  );
+    final fireApp = await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    talker.info(fireApp.options.projectId);
 
-  GetIt.I.registerLazySingleton<AbstractCryptoListRepos>(
-    () => CryptoListRepos(dio: dio),
-  );
+    final dio = Dio();
+    dio.interceptors.add(
+      TalkerDioLogger(
+        settings: const TalkerDioLoggerSettings(printResponseData: false),
+      ),
+    );
 
-  FlutterError.onError = (detail) =>
-      GetIt.I<Talker>().handle(detail.exception, detail.stack);
+    Bloc.observer = TalkerBlocObserver(
+      talker: talker,
+      settings: TalkerBlocLoggerSettings(
+        printEventFullData: false,
+        printStateFullData: false,
+      ),
+    );
 
-  runZonedGuarded(
-    () => runApp(CryptoCoinsApp()),
-    (e, st) => GetIt.I<Talker>().handle(e, st),
-  );
+    GetIt.I.registerLazySingleton<AbstractCryptoListRepos>(
+      () => CryptoListRepos(dio: dio),
+    );
+
+    FlutterError.onError = (detail) =>
+        GetIt.I<Talker>().handle(detail.exception, detail.stack);
+
+    runApp(CryptoCoinsApp());
+  }, (error, stack) {
+    final talker = GetIt.I.isRegistered<Talker>() ? GetIt.I<Talker>() : null;
+    if (talker != null) {
+      talker.handle(error, stack);
+    } else {
+      FlutterError.reportError(FlutterErrorDetails(exception: error, stack: stack));
+    }
+  });
 }

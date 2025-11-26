@@ -15,15 +15,15 @@ class CryptoListRepos implements AbstractCryptoListRepos {
     final data = response.data as Map<String, dynamic>;
     final dataRAW = data['RAW'] as Map<String, dynamic>;
     final cryptoCoinList = dataRAW.entries.map((e) {
-      final usdData =
-          (e.value as Map<String, dynamic>)['USD'] as Map<String, dynamic>;
+      final usdData = (e.value as Map<String, dynamic>)['USD'] as Map<String, dynamic>;
+
       final price = usdData['PRICE'];
       final imageUrl = usdData['IMAGEURL'];
 
       return CryptoCoin(
         name: e.key,
-        priceInUsd: price,
-        imageUrl: 'https://www.cryptocompare.com$imageUrl',
+        price: price,
+        imageUrl: 'https://www.cryptocompare.com$imageUrl'
       );
     }).toList();
 

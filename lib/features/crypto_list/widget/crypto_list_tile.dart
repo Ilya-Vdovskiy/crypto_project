@@ -14,10 +14,11 @@ class CryptoListTile extends StatelessWidget {
     final theme = Theme.of(context);
     return ListTile(
       title: Text(coin.name, style: theme.textTheme.labelLarge),
-      subtitle: Text('${coin.priceInUsd} \$', style: theme.textTheme.labelMedium),
+      subtitle: Text('${coin.price} \$', style: theme.textTheme.labelMedium),
       leading: Image.network(coin.imageUrl),
       trailing: Icon(Icons.arrow_forward_ios),
       onTap: () {},
     );
   }
 }
+// Navigator.pushNamed(context, '/coin_details');
